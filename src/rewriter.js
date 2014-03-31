@@ -19,7 +19,7 @@ class Rewriter {
 
     // a mapping of imported modules to their unique identifiers
     // i.e. `./a` -> `__import_0__`
-    this.importedModuleIdentifiers = {};
+    this.importedModuleIdx = {};
 
     // a list of each module that's been imported so far
     this.importedModules = {};
@@ -37,11 +37,11 @@ class Rewriter {
   trackModule(node) {
     var source = node.value;
 
-    if ( this.importedModuleIdentifiers[source] === undefined ) {
+    if ( this.importedModuleIdx[source] === undefined ) {
       /* jshint ignore:start */
       var identifier = `__imports_${this.importCounter}__`;
       /* jshint ignore:end */
-      this.importedModuleIdentifiers[source] = identifier;
+      this.importedModuleIdx[source] = this.importCounter;
       this.importCounter += 1;
     }
   }
@@ -58,7 +58,7 @@ class Rewriter {
 
     this.identifiers[alias] = {
       name: importName,
-      importIdentifier: this.importedModuleIdentifiers[node.source.value]
+      importIdentifier: this.importedModuleIdentifierFor(node.source.value)
     };
   }
 
@@ -67,7 +67,7 @@ class Rewriter {
 
     this.identifiers[alias] = {
       isModuleInstance: true,
-      importIdentifier: this.importedModuleIdentifiers[node.source.value]
+      importIdentifier: this.importedModuleIdentifierFor(node.source.value)
     };
   }
 
@@ -78,10 +78,22 @@ class Rewriter {
 
     var isDefault = identifier.name === 'default';
 
+    if ( isDefault ) {
+      return b.logicalExpression(
+        '||',
+        b.memberExpression(
+          b.identifier(identifier.importIdentifier),
+          b.literal('default'),
+          true
+        ),
+        b.identifier(identifier.importIdentifier)
+      );
+    }
+
     return b.memberExpression(
       b.identifier(identifier.importIdentifier),
-      isDefault ? b.literal(identifier.name) : b.identifier(identifier.name),
-      isDefault ? true : false
+      b.identifier(identifier.name),
+      false
     );
   }
 
@@ -113,6 +125,19 @@ class Rewriter {
 
       } else if ( n.Identifier.check(node) ) {
         if ( node.name in rewriter.identifiers ) {
+
+          var parent = this.parent.node;
+
+          // given node.name = foo...
+          // don't rewrite bar.foo
+          if ( n.MemberExpression.check(parent) && parent.property === node ) {
+            return;
+          }
+          // don't rewrite key in { foo: bar }
+          if ( n.Property.check(parent) && parent.key === node ) {
+            return;
+          }
+
           var scope = this.scope.lookup(node.name);
 
           if ( scope.depth === 0 ) {
@@ -130,6 +155,10 @@ class Rewriter {
         }
       }
     });
+
+    if ( this.postRewrite ) {
+      this.postRewrite();
+    }
 
     return recast.print(this.ast);
   }
@@ -149,6 +178,14 @@ class Rewriter {
 
     return path.join(this.dirPath, filename);
   }
+
+  importedModuleIdentifierFor(moduleName) {
+    /* jshint ignore:start */
+    var identifier = `__imports_${this.importedModuleIdx[moduleName]}__`;
+    /* jshint ignore:end */
+    return identifier;
+  }
+
 }
 
 module.exports = Rewriter;

@@ -18,5 +18,12 @@ function bar() {
   console.log(odd);
 }
 
+// nor should this
+var foo = { odd: 1 };
+
+// nor should this
+var foo;
+foo.odd = 'very';
+
 // but this should!
 console.log(odd);
