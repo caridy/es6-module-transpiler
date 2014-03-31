@@ -15,7 +15,15 @@ class Rewriter {
     this.moduleName = opts.moduleName;
     this.dirPath = opts.dirPath;  // used to resolve relative imports
 
-    this.ast = recast.parse(src, {esprima: esprima});
+    this.recastOpts = {
+      esprima: esprima,
+      // TODO: these names aren't always going to work!
+      // allow user configuration, there's no global way to infer this
+      sourceFileName: path.basename(this.registryName),
+      sourceMapName: path.basename(this.registryName) + '.map'
+    };
+
+    this.ast = recast.parse(src, this.recastOpts);
 
     // a mapping of imported modules to their unique identifiers
     // i.e. `./a` -> `__import_0__`
@@ -104,6 +112,7 @@ class Rewriter {
 
     recast.types.traverse(this.ast.program, function(node) {
       var replacement;
+
       this.scope.scan();  // always track scope, otherwise things get weird
 
       if ( n.ImportDeclaration.check(node) ) {
@@ -160,7 +169,7 @@ class Rewriter {
       this.postRewrite();
     }
 
-    return recast.print(this.ast);
+    return recast.print(this.ast, this.recastOpts);
   }
 
   resolvePath(filename) {

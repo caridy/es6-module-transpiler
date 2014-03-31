@@ -26,7 +26,7 @@ let opts = require('nomnom')
       required: true,
       abbr: 't',
       metavar: 'TYPE',
-      choices: ['amd', 'cjs', 'yui']
+      choices: ['amd', 'cjs', 'yui', 'amdWrappedCjs']
     },
 
     'name': {
@@ -39,6 +39,9 @@ let opts = require('nomnom')
     },
     'infer-name': {
       help: 'Use the path-inferred name for AMD/YUI module names (not just their registry names).',
+      flag: true
+    },
+    'map': {
       flag: true
     },
     'help': {
@@ -100,4 +103,8 @@ for (let filename of files) {
   let outPath = path.join(opts.dest, filename);
   require('mkdirp').sync(path.dirname(outPath));
   fs.writeFileSync(outPath, output.code);
+
+  if ( opts.map ) {
+    fs.writeFileSync(outPath + '.map', JSON.stringify(output.map));
+  }
 }
