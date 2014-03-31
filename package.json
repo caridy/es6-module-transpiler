@@ -12,7 +12,7 @@
   ],
   "bugs": "https://github.com/square/es6-module-transpiler/issues",
   "bin": {
-    "es6-module-transpiler": "./src/cli"
+    "es6-module-transpiler": "./dist/cli.js"
   },
   "directories": {
     "src": "./src"
@@ -28,10 +28,6 @@
     "nomnom": "~1.6.2",
     "underscore": "~1.6.0",
     "mkdirp": "~0.3.5"
-  },
-  "scripts": {
-    "test": "gulp build && grunt test",
-    "prepublish": "gulp build && grunt test"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
