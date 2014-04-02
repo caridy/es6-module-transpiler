@@ -9,9 +9,9 @@ var CJSRewriter = require('./cjs_rewriter');
 
 // say that five times fast
 class RequireJSCJSRewriter extends CJSRewriter {
-  postRewrite(ast) {
+  postRewrite() {
     // wrap ast.program.body in a function
-    var body = ast.program.body;
+    var body = this.ast.program.body;
     //define(function(require, exports, module) {
     var amdWrapped = b.expressionStatement(
       b.callExpression(
@@ -25,9 +25,7 @@ class RequireJSCJSRewriter extends CJSRewriter {
       )
     );
 
-    // TODO: this should probably be some kind of replace! have a feeling this doesn't work for
-    // src maps (though there are much greater issues than that right now)
-    ast.program.body = [amdWrapped];
+    this.ast.program.body = [amdWrapped];
   }
 }
 
