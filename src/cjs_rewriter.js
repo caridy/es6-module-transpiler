@@ -10,8 +10,8 @@ const REGISTRY_NAME = '__es6_module_registry__';
 const TRANSPILED_FLAG = '__es6_transpiled__';
 
 class CJSRewriter extends Rewriter {
-  insertPreamble() {
-    this.ast.program.body.unshift(
+  insertPreamble(ast) {
+    ast.program.body.unshift(
       // if (!__es6_registry__) { __es6_registry__ = {}; }
       //
       // this boilerplate should be CJS/non-browser only, up to build step to prefix otherwise

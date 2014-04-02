@@ -11,19 +11,19 @@ class Rewriter {
       throw new Error('You must pass a registryName to use');
     }
 
+    this.src = src;
     this.registryName = opts.registryName;
     this.moduleName = opts.moduleName;
     this.dirPath = opts.dirPath;  // used to resolve relative imports
 
     this.recastOpts = {
       esprima: esprima,
+      tabWidth: 2,
       // TODO: these names aren't always going to work!
       // allow user configuration, there's no global way to infer this
-      sourceFileName: path.basename(this.registryName),
-      sourceMapName: path.basename(this.registryName) + '.map'
+      sourceFileName: path.basename(this.registryName, '.js') + '.js',
+      sourceMapName: path.basename(this.registryName, '.js') + '.js.map'
     };
-
-    this.ast = recast.parse(src, this.recastOpts);
 
     // a mapping of imported modules to their unique identifiers
     // i.e. `./a` -> `__import_0__`
@@ -106,14 +106,18 @@ class Rewriter {
   }
 
   rewrite() {
+    var ast = recast.parse(this.src, this.recastOpts);
+
     var rewriter = this;  // traverse cb needs to be able to ref its `this`
 
-    this.insertPreamble();
+    this.insertPreamble(ast);
 
-    recast.types.traverse(this.ast.program, function(node) {
+    recast.types.traverse(this.ast, function(node) {
       var replacement;
 
-      this.scope.scan();  // always track scope, otherwise things get weird
+      if ( this.scope ) {
+        this.scope.scan();  // always track scope, otherwise things get weird
+       }
 
       if ( n.ImportDeclaration.check(node) ) {
         rewriter.trackModule(node.source);
@@ -169,7 +173,7 @@ class Rewriter {
       this.postRewrite();
     }
 
-    return recast.print(this.ast, this.recastOpts);
+    return recast.print(ast, this.recastOpts);
   }
 
   resolvePath(filename) {
