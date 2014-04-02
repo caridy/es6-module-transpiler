@@ -1,10 +1,10 @@
 require('../lib/traceur-runtime');
 
 var rewriters = {
-  cjs: require('./cjs_rewriter'),
-  amdWrappedCjs: require('./rjs_cjs_rewriter'),
-  amd: require('./amd_rewriter'),
-  yui: require('./yui_rewriter')
+  cjs: require('./rewriters/cjs_rewriter'),
+  amdWrappedCjs: require('./rewriters/amd_wrapped_cjs_rewriter'),
+  amd: require('./rewriters/amd_rewriter'),
+  yui: require('./rewriters/yui_rewriter')
 };
 
 function transpile(src, type, opts) {

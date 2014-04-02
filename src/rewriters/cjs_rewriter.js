@@ -2,7 +2,7 @@ var recast = require("recast");
 var n = recast.types.namedTypes;
 var b = recast.types.builders;
 
-var Rewriter = require('./rewriter');
+var Rewriter = require('../rewriter');
 
 // TODO: should these be configurable?
 const MODULE_OBJECT_NAME = '__es6_module__';

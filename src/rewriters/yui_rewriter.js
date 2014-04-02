@@ -1,4 +1,4 @@
-var Rewriter = require('./rewriter');
+var Rewriter = require('../rewriter');
 
 class YUIRewriter extends Rewriter {
 }

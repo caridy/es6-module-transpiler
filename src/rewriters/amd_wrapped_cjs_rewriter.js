@@ -5,10 +5,9 @@ var recast = require("recast");
 var n = recast.types.namedTypes;
 var b = recast.types.builders;
 
-var CJSRewriter = require('./cjs_rewriter');
+var CJSRewriter = require('../cjs_rewriter');
 
-// say that five times fast
-class RequireJSCJSRewriter extends CJSRewriter {
+class AMDWrappedCJSRewriter extends CJSRewriter {
   postRewrite() {
     // wrap ast.program.body in a function
     var body = this.ast.program.body;
@@ -29,4 +28,4 @@ class RequireJSCJSRewriter extends CJSRewriter {
   }
 }
 
-module.exports = RequireJSCJSRewriter;
+module.exports = AMDWrappedCJSRewriter;
