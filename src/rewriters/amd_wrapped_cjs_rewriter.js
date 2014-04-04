@@ -5,7 +5,7 @@ var recast = require("recast");
 var n = recast.types.namedTypes;
 var b = recast.types.builders;
 
-var CJSRewriter = require('../cjs_rewriter');
+var CJSRewriter = require('./cjs_rewriter');
 
 class AMDWrappedCJSRewriter extends CJSRewriter {
   postRewrite() {
