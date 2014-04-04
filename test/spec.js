@@ -92,3 +92,28 @@ describe('behavior', function() {
     // });
   });
 });
+
+// describe('source maps', function() {
+//
+//   describe('import statements', function() {
+//     it('are mapped to where __import_X__ is defined', function() {
+//
+//     });
+//   });
+//   describe('rewritten identifiers', function() {
+//     it('are mapped to the original identifier', function() {
+//
+//     });
+//   });
+//   describe('export statements', function() {
+//     it('are mapped to their equivalent export assignments', function() {
+//
+//     });
+//   });
+//   describe('unchanged lines', function() {
+//     it('are mapped 1:1', function() {
+//
+//     });
+//   });
+//
+// });
