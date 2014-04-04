@@ -9,12 +9,12 @@ var SourceMapConsumer = require('source-map').SourceMapConsumer;
 function compileToTmp(type, filename) {
   var in_ = fs.readFileSync(filename, 'utf8');
 
+  var relPath = path.relative(__dirname, filename);
   var out = compile(in_, type, {
-    registryName: filename,
+    registryName: relPath,
     dirPath: 'app'
   });
 
-  var relPath = path.relative(__dirname, filename);
   var outPath = path.join(__dirname, 'tmp', relPath);
   mkdirp(path.dirname(outPath));
   fs.writeFileSync(outPath, out.code);
@@ -95,18 +95,17 @@ describe('behavior', function() {
   });
 });
 
-describe.only('source maps', function() {
+describe('source maps', function() {
   // current output for reference:
   // http://bit.ly/1mGmXCo
+  // to regenerate, uncomment:
+  // compileToTmp('cjs', __dirname + '/maps/test.js');
 
   var src = fs.readFileSync(__dirname + '/maps/test.js', {encoding: 'utf8'});
   var out = compile(src, 'cjs', {
     registryName: 'test.js',
     dirPath: 'app'
   });
-
-  // fs.writeFileSync('./tmp.js', out.code);
-  // fs.writeFileSync('./tmp.js.map', JSON.stringify(out.map));
 
   var smc = new SourceMapConsumer(out.map);
 

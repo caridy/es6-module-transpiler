@@ -75,12 +75,11 @@ class CJSRewriter extends Rewriter {
   }
 
   replaceImportDeclaration(source) {
-    var replacement;
-
     if ( !this.importedModules[source] ) {
+      this.importedModules[source] = true;
 
       // replace w/ __import_0__ = __es6_module_registry__['name'] || require('name');
-      replacement = b.variableDeclaration('var', [
+      return b.variableDeclaration('var', [
         b.variableDeclarator(
           b.identifier(this.importedModuleIdentifierFor(source)),
           b.logicalExpression(
@@ -98,14 +97,9 @@ class CJSRewriter extends Rewriter {
           )
         )]
       );
-
-      this.importedModules[source] = true;
     } else {
-      // if we've already imported the module, just remove the declaration
-      replacement = null;
+      return null;
     }
-
-    return replacement;
   }
 
   replaceExportSpecifiers(node) {
