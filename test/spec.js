@@ -5,16 +5,18 @@ var path = require('path');
 var fs = require('fs');
 var expect = require('chai').expect;
 
-function testSyntax(folderName) {
-  // TODO: rename things so I don't have to do this
-
+function compileToTmp(type, filename) {
   var in_ = fs.readFileSync(filename, 'utf8');
 
-  var out = transpiler.transpile(in_, 'cjs', {
+  var out = compile(in_, type, {
     registryName: filename,
     dirPath: 'app'
   });
 
+  var relPath = path.relative(__dirname, filename);
+  var outPath = path.join(__dirname, 'tmp', relPath);
+  mkdirp(path.dirname(outPath));
+  fs.writeFileSync(outPath, out.code);
 }
 
 describe('syntax conversion', function() {
@@ -64,20 +66,6 @@ describe('syntax conversion', function() {
     });
   });
 });
-
-function compileToTmp(type, filename) {
-  var in_ = fs.readFileSync(filename, 'utf8');
-
-  var out = compile(in_, type, {
-    registryName: filename,
-    dirPath: 'app'
-  });
-
-  var relPath = path.relative(__dirname, filename);
-  var outPath = path.join(__dirname, 'tmp', relPath);
-  mkdirp(path.dirname(outPath));
-  fs.writeFileSync(outPath, out.code);
-}
 
 describe('behavior', function() {
   describe('cycles', function() {
