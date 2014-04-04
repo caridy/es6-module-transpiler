@@ -1,26 +1,14 @@
-"use strict";
-function __es6_transpiler_warn__(warning) {
-  if (typeof console === 'undefined') {
-  } else if (typeof console.warn === "function") {
-    console.warn(warning);
-  } else if (typeof console.log === "function") {
-    console.log(warning);
-  }
+// Module imports are correctly handled
+
+if (typeof __es6_module_registry__ === "undefined") {
+  __es6_module_registry__ = {};
 }
-function __es6_transpiler_build_module_object__(name, imported) {
-  var moduleInstanceObject = Object.create ? Object.create(null) : {};
-  if (typeof imported === "function") {
-    __es6_transpiler_warn__("imported module '"+name+"' exported a function - this may not work as expected");
-  }
-  for (var key in imported) {
-    if (Object.prototype.hasOwnProperty.call(imported, key)) {
-      moduleInstanceObject[key] = imported[key];
-    }
-  }
-  if (Object.freeze) {
-    Object.freeze(moduleInstanceObject);
-  }
-  return moduleInstanceObject;
+
+var __es6_module__ = {
+  "__es6_transpiled__": true
 }
-var foo = __es6_transpiler_build_module_object__("foo", require("foo"));
-var bar = __es6_transpiler_build_module_object__("bar", require("./foo/bar"));
+
+__es6_module_registry__["import_module"] = module.exports = __es6_module__;
+var __imports_0__ = __es6_module_registry__["foo"] || require("foo");
+var __imports_1__ = __es6_module_registry__["app/foo/bar"] || require("./foo/bar");
+console.log(__imports_0__, __imports_1__);

@@ -1,3 +1,13 @@
-"use strict";
-var uniq = require("utils").uniq;
-var forEach = require("utils").forEach;
+// Multiple imports from the same module result in the module only being imported once
+
+if (typeof __es6_module_registry__ === "undefined") {
+  __es6_module_registry__ = {};
+}
+
+var __es6_module__ = {
+  "__es6_transpiled__": true
+}
+
+__es6_module_registry__["multiple_import_from_same_path"] = module.exports = __es6_module__;
+var __imports_0__ = __es6_module_registry__["utils"] || require("utils");
+console.log(__imports_0__.uniq, __imports_0__.forEach);

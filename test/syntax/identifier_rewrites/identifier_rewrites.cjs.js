@@ -8,7 +8,7 @@ var __es6_module__ = {
   "__es6_transpiled__": true
 }
 
-__es6_module_registry__["scope_check"] = module.exports = __es6_module__;
+__es6_module_registry__["identifier_rewrites"] = module.exports = __es6_module__;
 var __imports_0__ = __es6_module_registry__["app/b"] || require("./b");
 
 __es6_module__["default"] = function even(n) {

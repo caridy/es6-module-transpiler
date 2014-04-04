@@ -24,7 +24,7 @@ function compileToTmp(type, filename) {
   fs.writeFileSync(outPath + '.map', JSON.stringify(out.map));
 }
 
-describe.only('syntax conversion', function() {
+describe('syntax conversion', function() {
 
   var fixtureFolders = glob(__dirname + '/syntax/*/');
 
@@ -54,7 +54,6 @@ describe.only('syntax conversion', function() {
         it('matches CJS output', function() {
           var expected = fs.readFileSync(path.join(folder, cjsFilename), {encoding: 'utf8'});
           var code = compile(input, 'cjs', opts).code;
-          fs.writeFileSync(path.join(__dirname + '/tmp/syntax', cjsFilename), code);
           expect(code).to.equal(expected);
         });
       }
