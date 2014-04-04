@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 var esprima = require('esprima');
 var recast = require('recast');
 var path = require('path');
@@ -22,6 +24,8 @@ class Rewriter {
       sourceFileName: path.basename(this.registryName),
       sourceMapName: path.basename(this.registryName) + '.map'
     };
+
+    _.extend(this.recastOpts, opts.recast);
 
     this.ast = recast.parse(src, this.recastOpts);
 
