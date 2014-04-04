@@ -15,7 +15,7 @@
     "es6-module-transpiler": "./dist/cli.js"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha -C --reporter spec test/spec.js"
+    "test": "gulp build && ./node_modules/.bin/mocha -C --reporter spec test/spec.js"
   },
   "directories": {
     "src": "./src"
