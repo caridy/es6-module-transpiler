@@ -4,6 +4,7 @@ var mkdirp = require('mkdirp').sync;
 var path = require('path');
 var fs = require('fs');
 var expect = require('chai').expect;
+var SourceMapConsumer = require('source-map').SourceMapConsumer;
 
 function compileToTmp(type, filename) {
   var in_ = fs.readFileSync(filename, 'utf8');
@@ -17,6 +18,7 @@ function compileToTmp(type, filename) {
   var outPath = path.join(__dirname, 'tmp', relPath);
   mkdirp(path.dirname(outPath));
   fs.writeFileSync(outPath, out.code);
+  fs.writeFileSync(outPath + '.map', JSON.stringify(out.map));
 }
 
 describe('syntax conversion', function() {
@@ -93,27 +95,48 @@ describe('behavior', function() {
   });
 });
 
-// describe('source maps', function() {
-//
-//   describe('import statements', function() {
-//     it('are mapped to where __import_X__ is defined', function() {
-//
-//     });
-//   });
-//   describe('rewritten identifiers', function() {
-//     it('are mapped to the original identifier', function() {
-//
-//     });
-//   });
-//   describe('export statements', function() {
-//     it('are mapped to their equivalent export assignments', function() {
-//
-//     });
-//   });
-//   describe('unchanged lines', function() {
-//     it('are mapped 1:1', function() {
-//
-//     });
-//   });
-//
-// });
+describe.only('source maps', function() {
+  // current output for reference:
+  // http://bit.ly/1mGmXCo
+
+  var src = fs.readFileSync(__dirname + '/maps/test.js', {encoding: 'utf8'});
+  var out = compile(src, 'cjs', {
+    registryName: 'test.js',
+    dirPath: 'app'
+  });
+
+  // fs.writeFileSync('./tmp.js', out.code);
+  // fs.writeFileSync('./tmp.js.map', JSON.stringify(out.map));
+
+  var smc = new SourceMapConsumer(out.map);
+
+  var generatedPositionFor = function(pos) {
+    var genPos = smc.generatedPositionFor({source: 'test.js', line: pos[0], column: pos[1]});
+    return [genPos.line, genPos.column];
+  };
+
+  describe('import statements', function() {
+    it('are mapped to where __import_X__ is defined', function() {
+      expect(generatedPositionFor([1, 0])).to.deep.equal([10, 0]);
+    });
+  });
+
+  describe('rewritten identifiers', function() {
+    it('are mapped to the original identifier', function() {
+      expect(generatedPositionFor([5, 13])).to.deep.equal([12, 10]);
+    });
+  });
+
+  describe('export statements', function() {
+    it('are mapped to their equivalent export assignments', function() {
+      expect(generatedPositionFor([9, 0])).to.deep.equal([14, 0]);
+    });
+  });
+
+  describe('unchanged lines', function() {
+    it('are mapped 1:1', function() {
+      expect(generatedPositionFor([3, 3])).to.deep.equal([11, 3]);
+    });
+  });
+
+});
