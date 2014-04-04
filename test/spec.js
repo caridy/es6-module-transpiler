@@ -12,7 +12,10 @@ function compileToTmp(type, filename) {
   var relPath = path.relative(__dirname, filename);
   var out = compile(in_, type, {
     registryName: relPath,
-    dirPath: 'app'
+    dirPath: 'app',
+    recast: {
+      tabWidth: 2
+    }
   });
 
   var outPath = path.join(__dirname, 'tmp', relPath);
@@ -21,7 +24,7 @@ function compileToTmp(type, filename) {
   fs.writeFileSync(outPath + '.map', JSON.stringify(out.map));
 }
 
-describe('syntax conversion', function() {
+describe.only('syntax conversion', function() {
 
   var fixtureFolders = glob(__dirname + '/syntax/*/');
 
@@ -50,7 +53,9 @@ describe('syntax conversion', function() {
       if (cjsFilename) {
         it('matches CJS output', function() {
           var expected = fs.readFileSync(path.join(folder, cjsFilename), {encoding: 'utf8'});
-          expect(compile(input, 'cjs', opts).code).to.equal(expected);
+          var code = compile(input, 'cjs', opts).code;
+          fs.writeFileSync(path.join(__dirname + '/tmp/syntax', cjsFilename), code);
+          expect(code).to.equal(expected);
         });
       }
       // if (amdFilename) {
