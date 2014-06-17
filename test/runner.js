@@ -90,7 +90,7 @@ function runTestDir(testDir) {
   var testName = Path.basename(testDir);
 
   var options = {
-    resolvers: [new modules.FileResolver([testDir])],
+    resolvers: [new modules.resolvers.file([testDir])],
     formatter: formatters[formatter]
   };
   var container = new modules.Container(options);
